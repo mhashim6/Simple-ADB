@@ -46,7 +46,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import mhashem6.commander.SpecificCommand;
 import mhashem6.commander.Command;
 import mhashem6.commander.Executer;
 import mhashem6.commander.exceptions.*;
@@ -99,7 +98,6 @@ public final class MainUI extends JFrame {
 
 	private JScrollPane scroll;
 
-	private Command notSpecificCommand;
 	private Command command;
 	private Executer executer;
 
@@ -261,8 +259,8 @@ public final class MainUI extends JFrame {
 		scroll = new JScrollPane((JTextArea) textArea);
 		// ======================================================================================
 
-		command = new SpecificCommand("adb");
-		notSpecificCommand = new Command("");
+		command = new Command();
+		command.setClient("adb");
 		executer = new Executer(textArea);
 	}
 
@@ -534,10 +532,10 @@ public final class MainUI extends JFrame {
 	}
 
 	/**
-	 * the method that prepares to the execution; if command radio is
-	 * enabled > then the input will be loaded with the text in the textArea as
-	 * an input that will be executed. if text boxes are enabled, their
-	 * contents of text will be added to the input that shall be executed.
+	 * the method that prepares to the execution; if command radio is enabled >
+	 * then the input will be loaded with the text in the textArea as an input
+	 * that will be executed. if text boxes are enabled, their contents of text
+	 * will be added to the input that shall be executed.
 	 * 
 	 */
 	private void fire() {
@@ -548,8 +546,8 @@ public final class MainUI extends JFrame {
 
 				if (txt5.isEnabled()) {
 					// your own command.
-					notSpecificCommand.setCommand(txt5.getText().split(" "));
-					executer.execute(notSpecificCommand);
+					command.setCommand(txt5.getText().split(" "));
+					executer.execute(command);
 				}
 				// =====================================================
 
@@ -605,16 +603,20 @@ public final class MainUI extends JFrame {
 			combo.setEnabled(true);
 
 			if (e.getSource() == adbRadio) {
-				((JTextArea) textArea).setBackground(Color.decode("#1C2021"));
-				((SpecificCommand) command).setClient("adb");
-				combo.setComboElements(CommandsBox.ADB_ITEMS);
 
+				((JTextArea) textArea).setBackground(Color.decode("#1C2021"));
+
+				command.setClient("adb");
+
+				combo.setComboElements(CommandsBox.ADB_ITEMS);
 			}
 			// =====================================================
 
 			else if (e.getSource() == fastbootRadio) {
+
 				((JTextArea) textArea).setBackground(Color.decode("#203040"));
-				((SpecificCommand) command).setClient("fastboot");
+
+				command.setClient("fastboot");
 
 				combo.setComboElements(CommandsBox.FASTBOOT_ITEMS);
 
@@ -622,6 +624,8 @@ public final class MainUI extends JFrame {
 			// =====================================================
 
 			else if (e.getSource() == commandRadio) {
+
+				command.setClient(null);
 
 				txt5.requestFocus();
 				combo.setEnabled(false);
@@ -658,7 +662,8 @@ public final class MainUI extends JFrame {
 				if (combo.getSelectedItem().equals("rm /data/system/gesture.key")) {
 
 					// command.setCommand(new String[] { "shell", "rm",
-					// "/data/system/gesture.key" }); //for some reason it's not working ?!!
+					// "/data/system/gesture.key" }); //for some reason it's not
+					// working ?!!
 					command.setCommand("shell");
 					command.appendArgument("rm");
 					command.appendArgument("/data/system/gesture.key");
