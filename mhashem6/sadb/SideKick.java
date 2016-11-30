@@ -32,7 +32,7 @@ import java.net.URISyntaxException;
 public final class SideKick {
 
 	public final static String HELP_URL = "http://forum.xda-developers.com/android/software/revive-simple-adb-tool-t3417155";
-	public final static String SOURCE_URL = "https://sourceforge.net/projects/sadb/";
+	public final static String SOURCE_URL = "https://github.com/mhashim6/Simple-ADB";
 	public final static String DONATE_URL = "http://forum.xda-developers.com/donatetome.php?u=5157399";
 
 	public final static String ABOUT_STRING = "Simple-ADB tool," + System.getProperty("line.separator")
