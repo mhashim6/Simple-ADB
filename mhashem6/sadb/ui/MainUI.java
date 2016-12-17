@@ -718,64 +718,9 @@ public final class MainUI extends JFrame {
 					}
 					// =====================================================
 
-					else if (combo.getSelectedItem().equals("flash")) {
+					else if (((String) (combo.getSelectedItem())).contains("flash")) {
 
-						preparePanel(pushPanel, false, "Select a .zip to flash");
-
-					}
-					// =====================================================
-
-					else if (combo.getSelectedItem().equals("flash recovery")) {
-
-						preparePanel(pushPanel, false, "Select .img recovery to flash");
-
-					}
-					// =====================================================
-
-					else if (combo.getSelectedItem().equals("flash boot")) {
-
-						preparePanel(pushPanel, false, "Select .img boot to flash");
-
-					}
-					// =====================================================
-
-					else if (combo.getSelectedItem().equals("flash system")) {
-
-						preparePanel(pushPanel, false, "Select .img system to flash");
-
-					}
-					// =====================================================
-
-					else if (combo.getSelectedItem().equals("flash data")) {
-
-						preparePanel(pushPanel, false, "Select .img data to flash");
-
-					}
-					// =====================================================
-
-					else if (combo.getSelectedItem().equals("flash cache")) {
-
-						preparePanel(pushPanel, false, "Select .img cache to flash");
-
-					}
-					// =====================================================
-
-					else if (combo.getSelectedItem().equals("flash userdata")) {
-
-						preparePanel(pushPanel, false, "Select .img userdata to flash");
-
-					}
-					// =====================================================
-
-					else if (combo.getSelectedItem().equals("flash bootloader")) {
-
-						preparePanel(pushPanel, false, "Select .img bootloader to flash");
-
-					}
-					// =====================================================
-
-					else if (combo.getSelectedItem().equals("flash radio")) {
-						preparePanel(pushPanel, false, "Select .img radio to flash");
+						preparePanel(pushPanel, false, "Select a file to flash");
 
 					}
 					// =====================================================
