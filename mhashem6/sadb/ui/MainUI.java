@@ -174,7 +174,7 @@ public final class MainUI extends JFrame {
 
 		RadioEvent radioEvent = new RadioEvent();
 
-		adbRadio = new JRadioButton("ADB", true);
+		adbRadio = new JRadioButton("ADB");
 		adbRadio.setFocusable(false);
 
 		adbRadio.addItemListener(radioEvent);
@@ -259,9 +259,12 @@ public final class MainUI extends JFrame {
 		scroll = new JScrollPane((JTextArea) textArea);
 		// ======================================================================================
 
+		// Commander init
 		command = new Command();
-		command.setClient("adb");
 		executer = new Executer(textArea);
+
+		adbRadio.setSelected(true);
+
 	}
 
 	private void initLayout() {
