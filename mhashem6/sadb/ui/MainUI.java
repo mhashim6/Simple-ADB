@@ -18,6 +18,7 @@
 * for additional informations you can visit the main thread of this program > http://forum.xda-developers.com/android/software/revive-simple-adb-tool-t3417155
 * you can contact me @ abohashem.com@gmail.com
 * Source : https://sourceforge.net/p/sadb/
+* this program is based on Commander library : https://github.com/mhashim6/Commander
 *
 */
 
@@ -261,7 +262,7 @@ public final class MainUI extends JFrame {
 
 		// Commander init
 		command = new Command();
-		executer = new Executer(textArea);
+		executer = new Executer(new ExecuterStreamFormatter(textArea));
 
 		adbRadio.setSelected(true);
 
@@ -550,7 +551,6 @@ public final class MainUI extends JFrame {
 				if (txt5.isEnabled()) {
 					// your own command.
 					command.setCommand(txt5.getText().split(" "));
-					executer.execute(command);
 				}
 				// =====================================================
 
@@ -575,15 +575,19 @@ public final class MainUI extends JFrame {
 					else if (txt2.isEnabled())
 						command.appendArgument(txt2.getText());
 
+					textArea.appendStdLine(command.toString() + "\n");
 					executer.execute(command);
 				}
 			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(MainUI.this, e1.fillInStackTrace(), "Error", JOptionPane.ERROR_MESSAGE);
+				SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(), "Error", JOptionPane.ERROR_MESSAGE);
 
 			} finally {
+				if (textArea.hasError())
+					SideKick.showMessage(MainUI.this, command.getClient() + " reported an error", "Error",
+							JOptionPane.ERROR_MESSAGE);
 
+				textArea.appendStdLine("===================\n");
 				operationOn(false);
-
 			}
 		}).start();
 
@@ -761,10 +765,11 @@ public final class MainUI extends JFrame {
 				try {
 					new FileSaveDialog(MainUI.this, executer.getOutput());
 
-				} catch (ExecNotFinishedException | FileFailException | NoOutputException e1) {
-					JOptionPane.showMessageDialog(MainUI.this, e1.fillInStackTrace(), "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
+				} catch (FileFailException e1) {
+						SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(), "Error",
+								JOptionPane.ERROR_MESSAGE);
+
+					}
 			}
 			// =====================================================
 
@@ -781,7 +786,7 @@ public final class MainUI extends JFrame {
 
 			else if (e.getSource() == about) {
 
-				JOptionPane.showMessageDialog(MainUI.this, SideKick.ABOUT_STRING, "About",
+				SideKick.showMessage(MainUI.this, SideKick.ABOUT_STRING.toString(), "About",
 						JOptionPane.INFORMATION_MESSAGE);
 
 			}
@@ -808,13 +813,12 @@ public final class MainUI extends JFrame {
 			else if (e.getSource() == abortBtn) {
 
 				try {
-					MainUI.this.executer.abort();
-
-				} catch (CmdAbortedException | IOException e1) {
-					JOptionPane.showMessageDialog(MainUI.this, e1.fillInStackTrace(), "Aborted",
-							JOptionPane.INFORMATION_MESSAGE);
+					executer.abort();
+					SideKick.showMessage(MainUI.this, "Execution aborted", "Aborted", JOptionPane.INFORMATION_MESSAGE);
+				} catch (IOException e1) {
+					SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(), "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
-
 			}
 			// =====================================================
 

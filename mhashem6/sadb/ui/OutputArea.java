@@ -18,6 +18,7 @@
 * for additional informations you can visit the main thread of this program > http://forum.xda-developers.com/android/software/revive-simple-adb-tool-t3417155
 * you can contact me @ abohashem.com@gmail.com
 * Source : https://sourceforge.net/p/sadb/
+* this program is based on Commander library : https://github.com/mhashim6/Commander
 *
 */
 
@@ -31,7 +32,11 @@ import mhashem6.commander.Appender;
 
 @SuppressWarnings("serial")
 class OutputArea extends JTextArea implements Appender {
-
+	
+	DefaultHighlighter.DefaultHighlightPainter highlightPainter;
+	Object tag = null;
+	private boolean hasError;
+	
 	public OutputArea() {
 		setBackground(Color.decode("#1C2021"));
 		setForeground(Color.WHITE);
@@ -42,10 +47,41 @@ class OutputArea extends JTextArea implements Appender {
 	}
 
 	@Override
-	public void appendLine(String line) {
+	public void appendStdLine(String line) {
+		hasError = false;
+		resetHighlighter();
+
 		append(line);
-		line = null;
 		setCaretPosition(getDocument().getLength());
+	}
+
+	@Override
+	public void appendErrLine(String line) {
+		hasError = true;
+		append(line);
+		setCaretPosition(getDocument().getLength());
+
+		resetHighlighter();
+
+		highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.red);
+
+		try {
+			tag = getHighlighter().addHighlight(getLineStartOffset(getLineCount() - 2),
+					getLineEndOffset(getLineCount() - 2), highlightPainter);
+
+		} catch (BadLocationException e) {
+			// hopefully no need for this.
+		}
+	}
+
+	public boolean hasError() {
+		return hasError;
+	}
+
+	private void resetHighlighter() {
+		if (highlightPainter != null && tag != null)
+			getHighlighter().removeHighlight(tag);
+
 	}
 
 }

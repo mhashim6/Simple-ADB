@@ -18,6 +18,7 @@
 * for additional informations you can visit the main thread of this program > http://forum.xda-developers.com/android/software/revive-simple-adb-tool-t3417155
 * you can contact me @ abohashem.com@gmail.com
 * Source : https://sourceforge.net/p/sadb/
+* this program is based on Commander library : https://github.com/mhashim6/Commander
 *
 */
 
@@ -35,9 +36,12 @@ public final class SideKick {
 	public final static String SOURCE_URL = "https://github.com/mhashim6/Simple-ADB";
 	public final static String DONATE_URL = "http://forum.xda-developers.com/donatetome.php?u=5157399";
 
-	public final static String ABOUT_STRING = "Simple-ADB tool," + System.getProperty("line.separator")
+	public final static String ABOUT_STRING = "Simple-ADB program," + System.getProperty("line.separator")
 			+ "a program made to make the process of using adb/fastboot simpler, with GUI."
-			+ System.getProperty("line.separator") + "* Copyright (C) 2016 mhashem6 > (Muhammad Hashim)."
+			+ System.getProperty("line.separator") 
+			+ "This program is based on Commander library : https://github.com/mhashim6/Commander"
+			+ System.getProperty("line.separator") + System.getProperty("line.separator")
+			+ "* Copyright (C) 2016 mhashem6 > (Muhammad Hashim)."
 			+ System.getProperty("line.separator") + System.getProperty("line.separator")
 			+ "This program is free software: you can redistribute it and/or modify it under"
 			+ System.getProperty("line.separator")
@@ -54,6 +58,7 @@ public final class SideKick {
 			+ "You should have received a copy of the GNU General Public License along with this program,"
 			+ System.getProperty("line.separator") + "If not, see <http://www.gnu.org/licenses/>."
 			+ System.getProperty("line.separator") + "you can contact me @ abohashem.com@gmail.com";
+	// ============================================================
 
 	/** to visit a URL address */
 	public static void visitAddress(String adress) {
@@ -75,5 +80,12 @@ public final class SideKick {
 		}
 
 	}
+	// ============================================================
+
+	public static void showMessage(JFrame frame, String text, String title, int type) {
+
+		JOptionPane.showMessageDialog(frame, text, title, type);
+	}
+	// ============================================================
 
 }
