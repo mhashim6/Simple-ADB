@@ -18,7 +18,6 @@
 * for additional informations you can visit the main thread of this program > http://forum.xda-developers.com/android/software/revive-simple-adb-tool-t3417155
 * you can contact me @ abohashem.com@gmail.com
 * Source : https://sourceforge.net/p/sadb/
-* this program is based on Commander library : https://github.com/mhashim6/Commander
 *
 */
 
@@ -29,6 +28,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 /** class that shall contain some helpful constants and methods */
 public final class SideKick {
 
@@ -37,11 +39,11 @@ public final class SideKick {
 	public final static String DONATE_URL = "http://forum.xda-developers.com/donatetome.php?u=5157399";
 
 	public final static String ABOUT_STRING = "Simple-ADB program," + System.getProperty("line.separator")
-			+ "a program made to make the process of using adb/fastboot simpler, with GUI."
-			+ System.getProperty("line.separator") 
+			+ "A program made to make the process of using adb/fastboot simpler, with GUI."
+			+ System.getProperty("line.separator")
 			+ "This program is based on Commander library : https://github.com/mhashim6/Commander"
 			+ System.getProperty("line.separator") + System.getProperty("line.separator")
-			+ "* Copyright (C) 2016 mhashem6 > (Muhammad Hashim)."
+			+ System.getProperty("line.separator") + "* Copyright (C) 2016 mhashim6 > (Muhammad Hashim)."
 			+ System.getProperty("line.separator") + System.getProperty("line.separator")
 			+ "This program is free software: you can redistribute it and/or modify it under"
 			+ System.getProperty("line.separator")

@@ -1,26 +1,26 @@
 /*
-* Simple-ADB tool , a tool made to make the process of using adb/fastboot simpler, with GUI
-* Copyright (C) 2016 mhashem6 > (Muhammad Hashim)
-* 
-* This program is free software: you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation, either version 3 of the License, or (at your option) any later
-* version.
-* 
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-* 
-* You should have received a copy of the GNU General Public License along with
-* this program. If not, see <http://www.gnu.org/licenses/>.
-* 
-* for additional informations you can visit the main thread of this program > http://forum.xda-developers.com/android/software/revive-simple-adb-tool-t3417155
-* you can contact me @ abohashem.com@gmail.com
-* Source : https://sourceforge.net/p/sadb/
-* this program is based on Commander library : https://github.com/mhashim6/Commander
-*
-*/
+ * Simple-ADB tool , a tool made to make the process of using adb/fastboot
+ * simpler, with GUI Copyright (C) 2016 mhashem6 > (Muhammad Hashim)
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * for additional informations you can visit the main thread of this program >
+ * http://forum.xda-developers.com/android/software/revive-simple-adb-tool-
+ * t3417155 you can contact me @ abohashem.com@gmail.com Source :
+ * https://sourceforge.net/p/sadb/
+ *
+ */
 
 package mhashem6.sadb.ui;
 
@@ -44,18 +44,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import mhashem6.commander.Command;
+import mhashem6.commander.CommandBuilder;
+import mhashem6.commander.CommandI;
 import mhashem6.commander.Executer;
-import mhashem6.commander.exceptions.*;
-
+import mhashem6.commander.ExecuterStreamFormatter;
 import mhashem6.sadb.SideKick;
 import mhashem6.sadb.exceptions.FileFailException;
 
 @SuppressWarnings("serial")
-public final class MainUI extends JFrame {
+public class MainUI extends JFrame {
 
 	private ImageIcon defaultIcon;
 
@@ -68,7 +67,7 @@ public final class MainUI extends JFrame {
 	private JPanel outputPanel;
 
 	private JMenuBar menubar;
-	private JMenu menu;
+	private JMenu	 menu;
 
 	private JMenuItem save;
 	private JMenuItem reset;
@@ -80,6 +79,7 @@ public final class MainUI extends JFrame {
 	private JRadioButton adbRadio;
 	private JRadioButton fastbootRadio;
 	private JRadioButton commandRadio;
+	private String	     client;
 
 	private CommandsBox combo;
 
@@ -89,18 +89,18 @@ public final class MainUI extends JFrame {
 	private JTextField txt4;
 	private JTextField txt5;
 
-	private JButton browseBtn;
-	private JButton browseBtn2;
-	private JButton activateBtn;
-	private JButton abortBtn;
+	private JButton	    browseBtn;
+	private JButton	    browseBtn2;
+	private JButton	    activateBtn;
+	private JButton	    abortBtn;
 	private ButtonEvent buttonEvent;
 
-	private mhashem6.commander.Appender textArea;
+	private OutputArea textArea;
 
 	private JScrollPane scroll;
 
-	private Command command;
-	private Executer executer;
+	private CommandBuilder cmdBuilder;
+	private Executer       executer;
 
 	public MainUI() {
 
@@ -135,18 +135,18 @@ public final class MainUI extends JFrame {
 
 		save = new JMenuItem("Save output");
 		save.addActionListener(buttonEvent);
-		save.setAccelerator(
-				javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+		save.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
+				java.awt.event.InputEvent.CTRL_MASK));
 
 		reset = new JMenuItem("Reset frame");
 		reset.addActionListener(buttonEvent);
-		reset.setAccelerator(
-				javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+		reset.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R,
+				java.awt.event.InputEvent.CTRL_MASK));
 
 		help = new JMenuItem("Help");
 		help.addActionListener(buttonEvent);
-		help.setAccelerator(
-				javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+		help.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H,
+				java.awt.event.InputEvent.CTRL_MASK));
 
 		donate = new JMenuItem("Donate");
 		donate.setForeground(Color.decode("#AC193D"));
@@ -196,7 +196,7 @@ public final class MainUI extends JFrame {
 		group.add(commandRadio);
 
 		combo = new CommandsBox();
-		combo.addItemListener(new comboevent());
+		combo.addItemListener(new Comboevent());
 		// ======================================================================================
 
 		// push/install/flash panel
@@ -257,15 +257,15 @@ public final class MainUI extends JFrame {
 		outputPanel = new JPanel();
 
 		textArea = new OutputArea();
-		scroll = new JScrollPane((JTextArea) textArea);
+		scroll = new JScrollPane(textArea);
 		// ======================================================================================
 
 		// Commander init
-		command = new Command();
+		cmdBuilder = new CommandBuilder();
 		executer = new Executer(new ExecuterStreamFormatter(textArea));
 
 		adbRadio.setSelected(true);
-
+		client = "adb";
 	}
 
 	private void initLayout() {
@@ -273,28 +273,36 @@ public final class MainUI extends JFrame {
 		decisionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Tough desicion"));
 		javax.swing.GroupLayout decisionPanelLayout = new javax.swing.GroupLayout(decisionPanel);
 		decisionPanel.setLayout(decisionPanelLayout);
-		decisionPanelLayout
-				.setHorizontalGroup(
-						decisionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(decisionPanelLayout
-										.createSequentialGroup().addContainerGap()
-										.addGroup(decisionPanelLayout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(decisionPanelLayout.createSequentialGroup()
-														.addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE,
-																244, javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addGap(0, 0, Short.MAX_VALUE))
-												.addGroup(decisionPanelLayout.createSequentialGroup()
-														.addComponent(adbRadio).addGap(10, 10, 10)
-														.addComponent(fastbootRadio).addGap(10, 10, 10).addComponent(
-																commandRadio, javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-										.addContainerGap()));
+		decisionPanelLayout.setHorizontalGroup(decisionPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(decisionPanelLayout.createSequentialGroup().addContainerGap()
+						.addGroup(decisionPanelLayout
+								.createParallelGroup(
+										javax.swing.GroupLayout.Alignment.LEADING)
+								.addGroup(decisionPanelLayout.createSequentialGroup()
+										.addComponent(combo,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												244,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addGap(0, 0, Short.MAX_VALUE))
+								.addGroup(decisionPanelLayout.createSequentialGroup()
+										.addComponent(adbRadio)
+										.addGap(10, 10, 10)
+										.addComponent(fastbootRadio)
+										.addGap(10, 10, 10)
+										.addComponent(commandRadio,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)))
+						.addContainerGap()));
 		decisionPanelLayout.setVerticalGroup(decisionPanelLayout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(decisionPanelLayout.createSequentialGroup().addContainerGap()
-						.addGroup(decisionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(adbRadio).addComponent(fastbootRadio).addComponent(commandRadio))
+						.addGroup(decisionPanelLayout
+								.createParallelGroup(
+										javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(adbRadio).addComponent(fastbootRadio)
+								.addComponent(commandRadio))
 						.addGap(14, 14, 14)
 						.addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE,
 								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -304,75 +312,87 @@ public final class MainUI extends JFrame {
 
 		javax.swing.GroupLayout pushPanelLayout = new javax.swing.GroupLayout(pushPanel);
 		pushPanel.setLayout(pushPanelLayout);
-		pushPanelLayout
-				.setHorizontalGroup(
-						pushPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(pushPanelLayout.createSequentialGroup().addContainerGap()
-										.addComponent(txt1, javax.swing.GroupLayout.PREFERRED_SIZE, 198,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(browseBtn, javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addContainerGap()));
-		pushPanelLayout.setVerticalGroup(pushPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		pushPanelLayout.setHorizontalGroup(pushPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(pushPanelLayout.createSequentialGroup().addContainerGap()
-						.addGroup(pushPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(txt1, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addComponent(txt1, javax.swing.GroupLayout.PREFERRED_SIZE, 198,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(browseBtn, javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addContainerGap()));
+		pushPanelLayout.setVerticalGroup(pushPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(pushPanelLayout.createSequentialGroup().addContainerGap()
+						.addGroup(pushPanelLayout
+								.createParallelGroup(
+										javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(txt1,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(browseBtn))
 						.addContainerGap()));
 
-		uninstallPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("APK <package> name to uninstall"));
+		uninstallPanel.setBorder(
+				javax.swing.BorderFactory.createTitledBorder("APK <package> name to uninstall"));
 
 		javax.swing.GroupLayout uninstallPanelLayout = new javax.swing.GroupLayout(uninstallPanel);
 		uninstallPanel.setLayout(uninstallPanelLayout);
-		uninstallPanelLayout
-				.setHorizontalGroup(uninstallPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(uninstallPanelLayout.createSequentialGroup().addContainerGap()
-								.addComponent(txt2, javax.swing.GroupLayout.PREFERRED_SIZE, 198,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		uninstallPanelLayout
-				.setVerticalGroup(uninstallPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(uninstallPanelLayout.createSequentialGroup().addContainerGap()
-								.addComponent(txt2, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		uninstallPanelLayout.setHorizontalGroup(uninstallPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(uninstallPanelLayout.createSequentialGroup().addContainerGap()
+						.addComponent(txt2, javax.swing.GroupLayout.PREFERRED_SIZE, 198,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)));
+		uninstallPanelLayout.setVerticalGroup(uninstallPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(uninstallPanelLayout.createSequentialGroup().addContainerGap()
+						.addComponent(txt2, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)));
 
 		pcPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("A directory (in PC)"));
 
 		javax.swing.GroupLayout pcPanelLayout = new javax.swing.GroupLayout(pcPanel);
 		pcPanel.setLayout(pcPanelLayout);
-		pcPanelLayout.setHorizontalGroup(pcPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		pcPanelLayout.setHorizontalGroup(pcPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(pcPanelLayout.createSequentialGroup().addContainerGap()
 						.addComponent(txt3, javax.swing.GroupLayout.PREFERRED_SIZE, 194,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(browseBtn2)
-						.addContainerGap()));
-		pcPanelLayout.setVerticalGroup(pcPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(pcPanelLayout.createSequentialGroup().addContainerGap()
-						.addGroup(pcPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(txt3, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(browseBtn2))
-						.addContainerGap()));
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+						.addComponent(browseBtn2).addContainerGap()));
+		pcPanelLayout.setVerticalGroup(pcPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(pcPanelLayout.createSequentialGroup().addContainerGap().addGroup(pcPanelLayout
+						.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+						.addComponent(txt3, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addComponent(browseBtn2)).addContainerGap()));
 
 		phonePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("A directory (in phone)"));
 
 		javax.swing.GroupLayout phonePanelLayout = new javax.swing.GroupLayout(phonePanel);
 		phonePanel.setLayout(phonePanelLayout);
-		phonePanelLayout
-				.setHorizontalGroup(phonePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(phonePanelLayout.createSequentialGroup().addContainerGap()
-								.addComponent(txt4, javax.swing.GroupLayout.PREFERRED_SIZE, 196,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		phonePanelLayout
-				.setVerticalGroup(phonePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(phonePanelLayout.createSequentialGroup().addContainerGap()
-								.addComponent(txt4, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap()));
+		phonePanelLayout.setHorizontalGroup(phonePanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(phonePanelLayout.createSequentialGroup().addContainerGap()
+						.addComponent(txt4, javax.swing.GroupLayout.PREFERRED_SIZE, 196,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)));
+		phonePanelLayout.setVerticalGroup(phonePanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(phonePanelLayout.createSequentialGroup().addContainerGap()
+						.addComponent(txt4, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap()));
 
 		outputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Output"));
 
@@ -381,92 +401,127 @@ public final class MainUI extends JFrame {
 
 		javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
 		outputPanel.setLayout(outputPanelLayout);
-		outputPanelLayout
-				.setHorizontalGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(outputPanelLayout.createSequentialGroup().addContainerGap()
-								.addComponent(scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 808, Short.MAX_VALUE)
-								.addContainerGap()));
-		outputPanelLayout
-				.setVerticalGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		outputPanelLayout.setHorizontalGroup(outputPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(outputPanelLayout.createSequentialGroup().addContainerGap()
+						.addComponent(scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 808,
+								Short.MAX_VALUE)
+						.addContainerGap()));
+		outputPanelLayout.setVerticalGroup(
+				outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 						.addComponent(scroll, javax.swing.GroupLayout.Alignment.TRAILING));
 
 		commandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Thy command shall be Excuted"));
 
 		javax.swing.GroupLayout commandPanelLayout = new javax.swing.GroupLayout(commandPanel);
 		commandPanel.setLayout(commandPanelLayout);
-		commandPanelLayout
-				.setHorizontalGroup(commandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(commandPanelLayout.createSequentialGroup().addContainerGap()
-								.addComponent(txt5, javax.swing.GroupLayout.PREFERRED_SIZE, 191,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		commandPanelLayout
-				.setVerticalGroup(commandPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(commandPanelLayout.createSequentialGroup().addContainerGap()
-								.addComponent(txt5, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap()));
+		commandPanelLayout.setHorizontalGroup(commandPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(commandPanelLayout.createSequentialGroup().addContainerGap()
+						.addComponent(txt5, javax.swing.GroupLayout.PREFERRED_SIZE, 191,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)));
+		commandPanelLayout.setVerticalGroup(commandPanelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(commandPanelLayout.createSequentialGroup().addContainerGap()
+						.addComponent(txt5, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap()));
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout
-								.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-										javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-												.addComponent(activateBtn)
-												.addGap(18, 18, 18)
-												.addComponent(abortBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 68,
-														javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addGap(97, 97, 97))
-								.addGroup(layout.createSequentialGroup()
-										.addGroup(layout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-												.addComponent(phonePanel, javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(pcPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(uninstallPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(pushPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(decisionPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(commandPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-								.addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addContainerGap()));
+		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout
+						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+								layout.createSequentialGroup().addComponent(activateBtn)
+										.addGap(18, 18, 18)
+										.addComponent(abortBtn,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												68,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addGap(97, 97, 97))
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(
+										javax.swing.GroupLayout.Alignment.LEADING,
+										false)
+										.addComponent(phonePanel,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(pcPanel,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(uninstallPanel,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(pushPanel,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(decisionPanel,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(commandPanel,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE))
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+						.addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addContainerGap()));
 		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout
 						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup()
-								.addComponent(outputPanel,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
-										Short.MAX_VALUE)
+						.addGroup(layout.createSequentialGroup().addComponent(outputPanel,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addContainerGap())
 						.addGroup(layout.createSequentialGroup()
-								.addComponent(decisionPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(pushPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(uninstallPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(pcPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(phonePanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(decisionPanel,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(pushPanel,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(uninstallPanel,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(pcPanel,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(phonePanel,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addGap(18, 18, 18)
-								.addComponent(commandPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(commandPanel,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addGap(18, 18, 18)
-								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(abortBtn).addComponent(activateBtn))
+								.addGroup(layout.createParallelGroup(
+										javax.swing.GroupLayout.Alignment.BASELINE)
+										.addComponent(abortBtn)
+										.addComponent(activateBtn))
 								.addGap(0, 45, Short.MAX_VALUE)))));
 		pack();
 	}
@@ -492,25 +547,21 @@ public final class MainUI extends JFrame {
 				com[i].setEnabled(!condition);
 			else if (!commandRadio.isSelected())
 				com[i].setEnabled(!condition);
-
 		}
 	}
 
 	/** to reset the components */
 	private void resetFrame() {
-
-		preparePanel(pushPanel, true, "A file to install / flash / push");
+		renamePanel(pushPanel, "A file to install / flash / push");
+		freezePanel(pushPanel, true);
 		freezePanel(uninstallPanel, true);
 		freezePanel(pcPanel, true);
-		preparePanel(phonePanel, true, "A directory (in phone)");
+		renamePanel(phonePanel, "A directory (in phone)");
+		freezePanel(phonePanel, true);
 		freezePanel(commandPanel, true);
 
 		activateBtn.setEnabled(false);
 		abortBtn.setEnabled(false);
-
-		command.clear();
-		executer.clearOutput();
-
 	}
 
 	/** to enable/disable the vital components during operations */
@@ -528,65 +579,58 @@ public final class MainUI extends JFrame {
 	}
 
 	/** to enable/disable the components of passed panel temporarily */
-	private void preparePanel(JPanel panel, boolean freezeCondition, String title) {
-
+	private void renamePanel(JPanel panel, String title) {
 		panel.setBorder(BorderFactory.createTitledBorder(title));
-		freezePanel(panel, freezeCondition);
-
 	}
 
 	/**
-	 * the method that prepares to the execution; if command radio is enabled >
-	 * then the input will be loaded with the text in the textArea as an input
-	 * that will be executed. if text boxes are enabled, their contents of text
-	 * will be added to the input that shall be executed.
+	 * the method that prepares to the execution; if text boxes are enabled,
+	 * their contents of text will be added to the input that shall be
+	 * executed.
 	 * 
 	 */
 	private void fire() {
 		operationOn(true);
+
 		new Thread(() -> {
-
 			try {
-
 				if (txt5.isEnabled()) {
 					// your own command.
-					command.setCommand(txt5.getText().split(" "));
+					cmdBuilder.forCommandLine(txt5.getText());
 				}
 				// =====================================================
 
 				else {
+					if (txt1.isEnabled())// is it install?
+						cmdBuilder.withOptions(new String[] { txt1.getText() });
 
-					command.clearArguments();
+					if (txt4.isEnabled()) {
+						if (txt3.isEnabled())// pull
+							cmdBuilder.withOptions(new String[] { txt4.getText(),
+									txt3.getText() });
 
-					if (txt1.isEnabled())
-						// is it install?
-						command.appendArgument(txt1.getText());
-
-					if (txt4.isEnabled())
-						// oh it's push
-						command.appendArgument(txt4.getText());
-
-					else if (txt3.isEnabled() && txt4.isEnabled()) {
-						// pull
-						command.appendArgument(txt4.getText());
-						command.appendArgument(txt3.getText());
+						else // oh it's push
+							cmdBuilder.withOptions(new String[] { txt4.getText() });
 					}
 
 					else if (txt2.isEnabled())
-						command.appendArgument(txt2.getText());
-
-					textArea.appendStdLine(command.toString() + "\n");
-					executer.execute(command);
+						cmdBuilder.withOptions(new String[] { txt2.getText() });
 				}
-			} catch (IOException e1) {
-				SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(), "Error", JOptionPane.ERROR_MESSAGE);
 
-			} finally {
+				CommandI command = cmdBuilder.build();
+				textArea.appendText(command.toString());
+				executer.executeCommand(command);
+			}
+			catch (IOException e1) {
+				SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			finally {
 				if (textArea.hasError())
-					SideKick.showMessage(MainUI.this, command.getClient() + " reported an error", "Error",
+					SideKick.showMessage(MainUI.this, "output includes errors", "Error",
 							JOptionPane.ERROR_MESSAGE);
 
-				textArea.appendStdLine("===================\n");
+				textArea.appendText("===================" + System.getProperty("line.separator"));
 				operationOn(false);
 			}
 		}).start();
@@ -596,10 +640,10 @@ public final class MainUI extends JFrame {
 	// ======================================================================================
 
 	/**
-	 * if adb radio is selected > combo box will be loaded with adb commands. if
-	 * fastboot radio is selected > combo box will be loaded with fastboot
-	 * commands. if Your own command is selected > combo will be disabled, and
-	 * textArea will be editable.
+	 * if adb radio is selected > combo box will be loaded with adb
+	 * commands. if fastboot radio is selected > combo box will be loaded
+	 * with fastboot commands. if Your own command is selected > combo will
+	 * be disabled, and textArea will be editable.
 	 */
 	class RadioEvent implements ItemListener {
 
@@ -608,12 +652,12 @@ public final class MainUI extends JFrame {
 
 			resetFrame();
 			combo.setEnabled(true);
+			//			cmdBuilder = new CommandBuilder();
 
 			if (e.getSource() == adbRadio) {
 
-				((JTextArea) textArea).setBackground(Color.decode("#1C2021"));
-
-				command.setClient("adb");
+				textArea.setBackground(Color.decode("#1C2021"));
+				client = "adb";
 
 				combo.setComboElements(CommandsBox.ADB_ITEMS);
 			}
@@ -621,25 +665,21 @@ public final class MainUI extends JFrame {
 
 			else if (e.getSource() == fastbootRadio) {
 
-				((JTextArea) textArea).setBackground(Color.decode("#203040"));
-
-				command.setClient("fastboot");
+				textArea.setBackground(Color.decode("#203040"));
+				client = "fastboot";
 
 				combo.setComboElements(CommandsBox.FASTBOOT_ITEMS);
-
 			}
 			// =====================================================
 
 			else if (e.getSource() == commandRadio) {
-
-				command.setClient(null);
 
 				txt5.requestFocus();
 				combo.setEnabled(false);
 				freezePanel(commandPanel, false);
 				activateBtn.setEnabled(true);
 
-				((JTextArea) textArea).setBackground(Color.decode("#0C545C")); // #7D1424
+				textArea.setBackground(Color.decode("#0C545C")); // #7D1424
 				txt5.setText("");
 			}
 			// =====================================================
@@ -651,11 +691,12 @@ public final class MainUI extends JFrame {
 	// ======================================================================================
 
 	/** ComboBox ItemListener */
-	class comboevent implements ItemListener {
+	class Comboevent implements ItemListener {
 
 		/**
-		 * it will decide which panels will be enabled, based on the selected
-		 * item, and load the Command input that shall be executed later.
+		 * it will decide which panels will be enabled, based on the
+		 * selected item, and load the Command input that shall be
+		 * executed later.
 		 */
 
 		@Override
@@ -671,49 +712,42 @@ public final class MainUI extends JFrame {
 					// command.setCommand(new String[] { "shell", "rm",
 					// "/data/system/gesture.key" }); //for some reason it's not
 					// working ?!!
-					command.setCommand("shell");
-					command.appendArgument("rm");
-					command.appendArgument("/data/system/gesture.key");
-
+					cmdBuilder.forCommandLine(client + " shell rm /data/system/gesture.key");
 				}
 				// =====================================================
 
 				else if (combo.getSelectedItem().equals("busybox df -h")) {
-
-					command.setCommand(
-							new String[] { "shell", System.getProperty("line.separator") + "busybox df -h" });
-
+					cmdBuilder.forCommandLine(client + " shell "
+							+ System.getProperty("line.separator") + "busybox df -h");
 				}
 				// =====================================================
 
 				else {
-
 					if (combo.getSelectedItem().equals("connect")) {
 
-						preparePanel(phonePanel, false, "Host");
-
+						renamePanel(phonePanel, "Host");
+						freezePanel(phonePanel, false);
 					}
 					// =====================================================
 
 					else if (combo.getSelectedItem().equals("install")) {
 
-						preparePanel(pushPanel, false, "Select apk file to install");
-
+						renamePanel(pushPanel, "Select apk file to install");
+						freezePanel(pushPanel, false);
 					}
 					// =====================================================
 
 					else if (combo.getSelectedItem().equals("uninstall")) {
 
 						freezePanel(uninstallPanel, false);
-
 					}
 					// =====================================================
 
 					else if (combo.getSelectedItem().equals("push")) {
 
-						preparePanel(pushPanel, false, "Select any file to push");
+						renamePanel(pushPanel, "Select any file to push");
 						freezePanel(phonePanel, false);
-
+						freezePanel(pushPanel, false);
 					}
 					// =====================================================
 
@@ -721,18 +755,16 @@ public final class MainUI extends JFrame {
 
 						freezePanel(pcPanel, false);
 						freezePanel(phonePanel, false);
-
 					}
 					// =====================================================
 
 					else if (((String) (combo.getSelectedItem())).contains("flash")) {
 
-						preparePanel(pushPanel, false, "Select a file to flash");
-
+						renamePanel(pushPanel, "Select a file to flash");
+						freezePanel(pushPanel, false);
 					}
 					// =====================================================
-
-					command.setCommand(combo.getSelectedItem().toString().split(" "));
+					cmdBuilder.forCommandLine(client + " " + combo.getSelectedItem().toString());
 				}
 
 			}
@@ -749,46 +781,46 @@ public final class MainUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 
 			if (e.getSource() == donate) {
-
 				SideKick.visitAddress(SideKick.DONATE_URL);
-
-			} else if (e.getSource() == help) {
+			}
+			else if (e.getSource() == help) {
 
 				SideKick.visitAddress(SideKick.HELP_URL);
-
-			} else if (e.getSource() == source) {
+			}
+			else if (e.getSource() == source) {
 
 				SideKick.visitAddress(SideKick.SOURCE_URL);
+			}
+			else if (e.getSource() == save) {
 
-			} else if (e.getSource() == save) {
+				if (textArea.getText().equals(""))
+					SideKick.showMessage(MainUI.this, "No output", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				else
+					try {
+						new FileSaveDialog(MainUI.this, textArea.getText());
 
-				try {
-					new FileSaveDialog(MainUI.this, executer.getOutput());
-
-				} catch (FileFailException e1) {
-						SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(), "Error",
-								JOptionPane.ERROR_MESSAGE);
+					}
+					catch (FileFailException e1) {
+						SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(),
+								"Error", JOptionPane.ERROR_MESSAGE);
 
 					}
 			}
 			// =====================================================
 
 			else if (e.getSource() == reset) {
-
-				((JTextArea) textArea).setText(null);
+				textArea.setText(null);
 
 				combo.clearSelectedElement();
 				resetFrame();
 				adbRadio.setSelected(true);
-
 			}
 			// =====================================================
 
 			else if (e.getSource() == about) {
-
 				SideKick.showMessage(MainUI.this, SideKick.ABOUT_STRING.toString(), "About",
 						JOptionPane.INFORMATION_MESSAGE);
-
 			}
 			// =====================================================
 
@@ -806,19 +838,13 @@ public final class MainUI extends JFrame {
 
 			else if (e.getSource() == activateBtn) {
 				fire();
-
 			}
 			// =====================================================
 
 			else if (e.getSource() == abortBtn) {
-
-				try {
-					executer.abort();
-					SideKick.showMessage(MainUI.this, "Execution aborted", "Aborted", JOptionPane.INFORMATION_MESSAGE);
-				} catch (IOException e1) {
-					SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(), "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
+				executer.abort();
+				SideKick.showMessage(MainUI.this, "Execution aborted", "Aborted",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 			// =====================================================
 

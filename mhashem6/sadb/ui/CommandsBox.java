@@ -35,10 +35,10 @@ class CommandsBox extends JComboBox {
 
 	private DefaultComboBoxModel cbm;
 
-	final static String[] ADB_ITEMS = { "devices -l", "connect", "disconnect", "logcat", "install", "uninstall", "push",
-			"pull", "kill-all", "shell top", "shell free", "busybox df -h", "rm /data/system/gesture.key", "reboot",
-			"reboot recovery", "reboot download", "reboot bootloader", "reboot fastboot", "reboot sideload", "root",
-			"unroot", "help", "kill-server" };
+	final static String[] ADB_ITEMS = { "devices -l", "usb", "connect", "disconnect", "logcat", "shell top", "shell free",
+			"shell ps", "shell ip", "shell netsat", "shell pm list packages", "install", "uninstall", "push", "pull",
+			"kill-all", "busybox df -h", "rm /data/system/gesture.key", "reboot", "reboot recovery", "reboot download",
+			"reboot bootloader", "reboot fastboot", "reboot sideload", "root", "unroot", "help", "kill-server" };
 
 	final static String[] FASTBOOT_ITEMS = { "devices -l", "reboot-bootloader", "erase system", "erase data",
 			"erase cache", "flash", "flash recovery", "flash boot", "flash system", "flash data", "flash cache",
