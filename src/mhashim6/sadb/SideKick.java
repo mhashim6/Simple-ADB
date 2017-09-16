@@ -13,14 +13,15 @@ import javax.swing.JOptionPane;
  */
 public final class SideKick {
 
-	public final static String	HELP_URL		= "http://forum.xda-developers.com/android/software/revive-simple-adb-tool-t3417155";
-	public final static String	SOURCE_URL	= "https://github.com/mhashim6/Simple-ADB";
-	public final static String	DONATE_URL	= "https://paypal.me/mhashim6";
-	public final static String	NEW_LINE		= System.getProperty("line.separator");
+	public final static String	HELP_URL							= "http://forum.xda-developers.com/android/software/revive-simple-adb-tool-t3417155";
+	public final static String	SOURCE_URL						= "https://github.com/mhashim6/Simple-ADB";
+	public final static String	COMMAND_EXECUTOR_URL	= "https://github.com/mhashim6/System-Command-Executor";
+	public final static String	DONATE_URL						= "https://paypal.me/mhashim6";
+	public final static String	NEW_LINE							= System.getProperty("line.separator");
 
 	public final static String ABOUT_STRING = "Simple-ADB program." + NEW_LINE
 			+ "developed to make the process of using ADB/Fastboot simpler, with a Graphical User Interface." + NEW_LINE
-			+ "This program is based on Commander library : https://github.com/mhashim6/Commander" + NEW_LINE + NEW_LINE
+			+ "This program is based on Commander library : " + COMMAND_EXECUTOR_URL + NEW_LINE + NEW_LINE
 			+ "* Copyright (C) 2017 mhashim6 > (Muhammad Hashim)." + NEW_LINE + NEW_LINE
 			+ "This program is free software: you can redistribute it and/or modify it under" + NEW_LINE
 			+ "the terms of the GNU General Public License as published by the Free Software" + NEW_LINE
