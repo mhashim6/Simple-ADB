@@ -532,8 +532,8 @@ public class MainUI extends JFrame {
 				textArea.flush();
 				textArea.addSeparator();
 
-				if (exitValue < 0)
-					SideKick.showMessage(MainUI.this, "output includes errors", "Error", JOptionPane.ERROR_MESSAGE);
+				if (exitValue < 0) SideKick.showMessage(MainUI.this, "command returned with exit code: " + exitValue, "Error",
+					JOptionPane.ERROR_MESSAGE);
 
 				operationOn(false);
 			}
