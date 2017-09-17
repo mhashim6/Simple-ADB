@@ -18,6 +18,7 @@ public final class SideKick {
 	public final static String	SOURCE_URL						= "https://github.com/mhashim6/Simple-ADB";
 	public final static String	COMMAND_EXECUTOR_URL	= "https://github.com/mhashim6/System-Command-Executor";
 	public final static String	DONATE_URL						= "https://paypal.me/mhashim6";
+	public final static String	EMAIL									= "m6hashim@gmail.com";
 	public final static String	NEW_LINE							= System.getProperty("line.separator");
 
 	public final static String ABOUT_STRING = "Simple-ADB program." + NEW_LINE
@@ -31,7 +32,7 @@ public final class SideKick {
 			+ "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS" + NEW_LINE
 			+ "FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details." + NEW_LINE
 			+ "You should have received a copy of the GNU General Public License along with this program," + NEW_LINE
-			+ "If not, see <http://www.gnu.org/licenses/>." + NEW_LINE + "you can contact me @ abohashem.com@gmail.com";
+			+ "If not, see <http://www.gnu.org/licenses/>." + NEW_LINE + "you can contact me: " + EMAIL;
 	// ============================================================
 
 	/** to visit a URL address */
