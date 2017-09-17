@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  * @author mhashim6
@@ -58,7 +59,7 @@ public final class SideKick {
 
 	public static void showMessage(JFrame frame, String text, String title, int type) {
 
-		JOptionPane.showMessageDialog(frame, text, title, type);
+		SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame, text, title, type));
 	}
 	// ============================================================
 

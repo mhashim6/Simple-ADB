@@ -485,20 +485,13 @@ public class MainUI extends JFrame {
 		panel.setBorder(BorderFactory.createTitledBorder(title));
 	}
 
-	/**
-	 * the method that prepares to the execution; if text boxes are enabled, their
-	 * contents of text will be added to the input that shall be executed.
-	 * 
-	 */
 	private void fire() {
 		operationOn(true);
 
 		new Thread(() -> {
 			try {
-				if (txt5.isEnabled()) {
-					// your own command.
+				if (txt5.isEnabled()) // your own command.
 					cmdBuilder.forCommandLine(txt5.getText());
-				}
 				// =====================================================
 
 				else {
@@ -518,27 +511,31 @@ public class MainUI extends JFrame {
 
 				Command cmd = cmdBuilder.build();
 				textArea.append(cmd.string() + SideKick.NEW_LINE);
+
 				currentProcessContainer = CommandExecutor.execute(cmd, outputPrinter);
+				checkForErrors(currentProcessContainer.getExecutionReport().exitValue());
 			}
+
 			catch (IOException e1) {
-				SideKick.showMessage(MainUI.this, e1.fillInStackTrace().toString(), "Error", JOptionPane.ERROR_MESSAGE);
+				SideKick.showMessage(MainUI.this, e1.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (NullPointerException e) {
 			}
 
 			finally {
-				int exitValue = currentProcessContainer.getExecutionReport().exitValue();
-
 				hangOn(100);
 
 				textArea.flush();
 				textArea.addSeparator();
 
-				if (exitValue < 0) SideKick.showMessage(MainUI.this, "command returned with exit code: " + exitValue, "Error",
-					JOptionPane.ERROR_MESSAGE);
-
 				operationOn(false);
 			}
 		}).start();
+	}
 
+	private void checkForErrors(int exitValue) {
+		if (exitValue < 0) SideKick.showMessage(MainUI.this, "command returned with exit code: " + exitValue, "Error",
+			JOptionPane.ERROR_MESSAGE);
 	}
 
 	private void hangOn(long time) {
@@ -548,7 +545,6 @@ public class MainUI extends JFrame {
 		catch (InterruptedException e) {
 		}
 	}
-
 	// ======================================================================================
 
 	class RadioEvent implements ItemListener {
