@@ -82,6 +82,7 @@ public class MainUI extends JFrame {
 	private CommandBuilder					cmdBuilder;
 	private ExecutionOutputPrinter	outputPrinter;
 	private ProcessMonitor					currentProcessContainer;
+	private static final String			COMMAND_FORMAT	= "[%s]";
 
 	public MainUI() {
 
@@ -503,23 +504,21 @@ public class MainUI extends JFrame {
 							cmdBuilder.withOptions(txt4.getText(), txt3.getText());
 
 						else // oh it's push.
-							cmdBuilder.withOptions(txt4.getText());
+							cmdBuilder.withOptions(txt1.getText(), txt4.getText());
 					}
 
 					else if (txt2.isEnabled()) cmdBuilder.withOptions(txt2.getText());
 				}
 
 				Command cmd = cmdBuilder.build();
-				textArea.append(cmd.string() + SideKick.NEW_LINE);
+				textArea.append(String.format(COMMAND_FORMAT, cmd.string()) + SideKick.NEW_LINE);
 
-				currentProcessContainer = CommandExecutor.execute(cmd, outputPrinter);
+				currentProcessContainer = CommandExecutor.execute(cmd, null, outputPrinter);
 				checkForErrors(currentProcessContainer.getExecutionReport().exitValue());
 			}
 
 			catch (IOException e1) {
 				SideKick.showMessage(MainUI.this, e1.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			catch (NullPointerException e) {
 			}
 
 			finally {
