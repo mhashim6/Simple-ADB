@@ -7,15 +7,15 @@ import java.io.IOException;
  */
 @SuppressWarnings("serial")
 public class FileFailException extends IOException {
-	private String fileName;
+    private String fileName;
 
-	public FileFailException(String fileName) {
-		this.fileName = fileName;
-	}
+    public FileFailException(String fileName) {
+        this.fileName = fileName;
+    }
 
-	public String string() {
-		return "could not cerate : " + fileName + " file";
+    public String string() {
+        return "could not cerate : " + fileName + " file";
 
-	}
+    }
 
 }

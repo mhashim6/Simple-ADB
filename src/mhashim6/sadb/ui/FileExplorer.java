@@ -9,25 +9,25 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 @SuppressWarnings("serial")
 class FileExplorer extends JFileChooser {
 
-	private String fileName;
+    private String fileName;
 
-	FileExplorer(MainUI frame) {
-		setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		setApproveButtonText("Select");
-		setFileFilter(new FileNameExtensionFilter("Directories,flashable files & apk's", "apk", "img", "zip"));
+    FileExplorer(MainUI frame) {
+        setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        setApproveButtonText("Select");
+        setFileFilter(new FileNameExtensionFilter("Directories,flashable files & apk's", "apk", "img", "zip"));
 
-		int filesMenu = showOpenDialog(frame);
-		if (filesMenu == JFileChooser.APPROVE_OPTION) {
-			setFileName(getSelectedFile().getPath());
-		}
+        int filesMenu = showOpenDialog(frame);
+        if (filesMenu == JFileChooser.APPROVE_OPTION) {
+            setFileName(getSelectedFile().getPath());
+        }
 
-	}
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public String getFileName() {
+        return fileName;
+    }
 
-	private void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    private void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 }

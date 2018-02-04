@@ -15,32 +15,32 @@ import mhashim6.sadb.exceptions.FileFailException;
 @SuppressWarnings("serial")
 class FileSaveDialog extends JFileChooser {
 
-	public FileSaveDialog(MainUI frame, String whatToSave) throws FileFailException {
+    public FileSaveDialog(MainUI frame, String whatToSave) throws FileFailException {
 
-		setDialogTitle("Save AS");
-		setFileFilter(new FileNameExtensionFilter(".log, .txt", "log", "txt"));
+        setDialogTitle("Save AS");
+        setFileFilter(new FileNameExtensionFilter(".log, .txt", "log", "txt"));
 
-		int userSelection = showSaveDialog(frame);
+        int userSelection = showSaveDialog(frame);
 
-		if (userSelection == JFileChooser.APPROVE_OPTION) {
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
 
-			File file = getSelectedFile();
+            File file = getSelectedFile();
 
-			try {
-				file.createNewFile();
-			} catch (IOException e1) {
-				throw new FileFailException(file.getName());
-			}
+            try {
+                file.createNewFile();
+            } catch (IOException e1) {
+                throw new FileFailException(file.getName());
+            }
 
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-				bw.write(whatToSave);
-			} catch (IOException e) {
-				throw new FileFailException(file.getName());
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+                bw.write(whatToSave);
+            } catch (IOException e) {
+                throw new FileFailException(file.getName());
 
-			}
+            }
 
-		}
+        }
 
-	}
+    }
 
 }
